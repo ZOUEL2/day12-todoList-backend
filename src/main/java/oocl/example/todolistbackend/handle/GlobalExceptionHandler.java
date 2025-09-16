@@ -1,5 +1,6 @@
 package oocl.example.todolistbackend.handle;
 
+import oocl.example.todolistbackend.exception.TodoNoFoundException;
 import oocl.example.todolistbackend.exception.TodoTextIllegalException;
 
 import org.springframework.http.HttpStatus;
@@ -17,5 +18,9 @@ public class GlobalExceptionHandler {
     }
 
 
-
+    @ExceptionHandler(TodoNoFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleTodoNoFoundException(Exception e) {
+        return e.getMessage();
+    }
 }

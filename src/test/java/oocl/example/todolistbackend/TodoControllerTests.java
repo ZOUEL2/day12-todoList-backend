@@ -11,8 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,7 +29,6 @@ public class TodoControllerTests {
     public void setup() {
         todoRepository.clear();
     }
-
 
     private Long createNewTodoItem(String text) throws Exception {
         MvcResult mvcResult = mockMvc.perform(post("/todos")
@@ -71,8 +69,8 @@ public class TodoControllerTests {
     @Test
     public void should_throw_exception_when_given_illegal_todo_text_to_create() throws Exception {
         mockMvc.perform(post("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
                                 {
                                   "text":""
                                 }
@@ -89,5 +87,37 @@ public class TodoControllerTests {
                 .andExpect(status().isUnprocessableEntity());
     }
 
+    @Test
+    public void should_update_todo_when_given_legal_todo_reqBody() throws Exception {
+        long oldId = createNewTodoItem("OldText");
+
+        mockMvc.perform(put("/todos/{id}",oldId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "text":"NewName",
+                            "done": true
+                          }
+                        """)
+        ).andExpect(status().isOk());
+
+        mockMvc.perform(get("/todos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(oldId))
+                .andExpect(jsonPath("$[0].done").value(true))
+                .andExpect(jsonPath("$[0].text").value("NewName"));
+    }
+
+    @Test
+    void should_return_404_when_put_todo_given_not_exist_id() throws Exception {
+        mockMvc.perform(put("/todos/{id}", 999) .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "text":"NewName",
+                            "done": true
+                          }
+                        """)
+                ).andExpect(status().isNotFound());
+    }
 
 }

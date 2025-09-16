@@ -22,7 +22,8 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
-    private Boolean done;
+    @Builder.Default
+    private Boolean done = false;
     private String description;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
