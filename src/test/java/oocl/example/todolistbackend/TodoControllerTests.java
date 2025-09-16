@@ -141,5 +141,23 @@ public class TodoControllerTests {
                 .andExpect(jsonPath("$[0].text").value("OldText"));
     }
 
+    @Test
+    void should_delete_todo_when_delete_todo_given_exist_id() throws Exception {
+        long oldId = createNewTodoItem("OldText");
+
+        mockMvc.perform(delete("/todos/{id}",oldId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/todos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void should_return_404_when_delete_todo_given_not_exist_id() throws Exception {
+        mockMvc.perform(delete("/todos/{id}",999))
+                .andExpect(status().isNotFound());
+    }
+
 
 }

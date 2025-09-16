@@ -43,4 +43,11 @@ public class TodoService {
         }
         todoRepository.update(todo);
     }
+
+    public void delete(long id) {
+        boolean removed = todoRepository.removeById(id);
+        if (!removed) {
+            throw new TodoNoFoundException("该条todo不存在");
+        }
+    }
 }

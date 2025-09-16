@@ -31,4 +31,12 @@ public class TodoRepository {
     public void update(Todo todo) {
         todoJpaRepository.save(todo);
     }
+
+    public boolean removeById(long id) {
+        if (todoJpaRepository.existsById(id)) {
+            todoJpaRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
