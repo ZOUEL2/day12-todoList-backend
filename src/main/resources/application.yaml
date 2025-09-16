@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/todo?useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf8
     username: root
     password: 222222
   jpa:
