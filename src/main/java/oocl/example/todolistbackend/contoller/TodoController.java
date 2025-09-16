@@ -3,6 +3,7 @@ package oocl.example.todolistbackend.contoller;
 import lombok.RequiredArgsConstructor;
 import oocl.example.todolistbackend.entity.Todo;
 import oocl.example.todolistbackend.req.TodoCreateReq;
+import oocl.example.todolistbackend.req.TodoPatchReq;
 import oocl.example.todolistbackend.req.TodoUpdateReq;
 import oocl.example.todolistbackend.service.TodoService;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +38,14 @@ public class TodoController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     private void updateTodo(@PathVariable long id, @RequestBody TodoUpdateReq todoUpdateReq) {
+        todoService.update(id,todoUpdateReq);
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    private void updateTodoDone(@PathVariable long id, @RequestBody TodoPatchReq done) {
+        TodoUpdateReq todoUpdateReq = new TodoUpdateReq();
+        todoUpdateReq.setDone(done.getDone());
         todoService.update(id,todoUpdateReq);
     }
 

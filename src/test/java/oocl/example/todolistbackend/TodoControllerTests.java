@@ -120,4 +120,26 @@ public class TodoControllerTests {
                 ).andExpect(status().isNotFound());
     }
 
+
+    @Test
+    void should_patch_done_status_when_patch_todo_given_legal_done_status() throws Exception {
+        long oldId = createNewTodoItem("OldText");
+
+        mockMvc.perform(patch("/todos/{id}",oldId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "done": true
+                                  }
+                                """)
+                ).andExpect(status().isOk());
+
+        mockMvc.perform(get("/todos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(oldId))
+                .andExpect(jsonPath("$[0].done").value(true))
+                .andExpect(jsonPath("$[0].text").value("OldText"));
+    }
+
+
 }

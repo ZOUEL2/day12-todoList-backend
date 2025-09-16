@@ -32,8 +32,15 @@ public class TodoService {
         if (todo == null){
             throw new TodoNoFoundException("该条todo不存在");
         }
-        todo.setDone(todoUpdateReq.getDone());
-        todo.setText(todoUpdateReq.getText());
+        if (todoUpdateReq.getDone() != null) {
+            todo.setDone(todoUpdateReq.getDone());
+        }
+        if (todoUpdateReq.getText() != null) {
+            if (todoUpdateReq.getText().isBlank()) {
+                throw new TodoTextIllegalException("text为必填项");
+            }
+            todo.setText(todoUpdateReq.getText());
+        }
         todoRepository.update(todo);
     }
 }
