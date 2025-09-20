@@ -13,3 +13,6 @@ spring:
   h2:
     console:
       enabled: true # enable h2 web console
+  ai:
+    openai:
+      api-key: test-key

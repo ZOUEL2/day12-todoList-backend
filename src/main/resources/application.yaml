@@ -1,17 +1,24 @@
-server:
-  port: 8888
-
 spring:
+  ai:
+    openai:
+      base-url: https://api.openai.com
+      api-key: sk-tPO8dQHuouuwN6GdqffKOAhiJmmMM7376hVUJnnIltV4Xo1C
+      chat:
+        options:
+          model: gpt-5
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   datasource:
-    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf8
-    username: root
-    password: 222222
+    url: ${DATABASE_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD}
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
   flyway:
+    enabled: true
+    locations: classpath:db/migration
     baseline-on-migrate: true
+    validate-on-migrate: true

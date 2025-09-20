@@ -1,7 +1,7 @@
 package oocl.example.todolistbackend;
 
 import jakarta.annotation.Resource;
-import oocl.example.todolistbackend.repository.TodoRepository;
+import oocl.example.todolistbackend.repository.TodoJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,17 +17,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TodoControllerTests {
+class TodoControllerTests {
 
     @Resource
     private MockMvc mockMvc;
 
     @Resource
-    private TodoRepository todoRepository;
+    private TodoJpaRepository todoJpaRepository;
 
     @BeforeEach
-    public void setup() {
-        todoRepository.clear();
+    void setup() {
+        todoJpaRepository.deleteAll();
     }
 
     private Long createNewTodoItem(String text) throws Exception {
@@ -46,7 +46,7 @@ public class TodoControllerTests {
     }
 
     @Test
-    public void should_list_all_todo() throws Exception {
+    void should_list_all_todo() throws Exception {
         createNewTodoItem("1111");
         createNewTodoItem("2222");
 
@@ -57,7 +57,7 @@ public class TodoControllerTests {
     }
 
     @Test
-    public void should_create_new_todo_item_when_given_legal_todo_text() throws Exception {
+    void should_create_new_todo_item_when_given_legal_todo_text() throws Exception {
         Long id1 = createNewTodoItem("1111");
         Long id2 = createNewTodoItem("2222");
 
@@ -67,7 +67,7 @@ public class TodoControllerTests {
     }
 
     @Test
-    public void should_throw_exception_when_given_illegal_todo_text_to_create() throws Exception {
+    void should_throw_exception_when_given_illegal_todo_text_to_create() throws Exception {
         mockMvc.perform(post("/todos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -88,10 +88,10 @@ public class TodoControllerTests {
     }
 
     @Test
-    public void should_update_todo_when_given_legal_todo_reqBody() throws Exception {
+    void should_update_todo_when_given_legal_todo_reqBody() throws Exception {
         long oldId = createNewTodoItem("OldText");
 
-        mockMvc.perform(put("/todos/{id}",oldId)
+        mockMvc.perform(put("/todos/{id}", oldId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -110,14 +110,14 @@ public class TodoControllerTests {
 
     @Test
     void should_return_404_when_put_todo_given_not_exist_id() throws Exception {
-        mockMvc.perform(put("/todos/{id}", 999) .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
+        mockMvc.perform(put("/todos/{id}", 999).contentType(MediaType.APPLICATION_JSON)
+                .content("""
                         {
                             "text":"NewName",
                             "done": true
                           }
                         """)
-                ).andExpect(status().isNotFound());
+        ).andExpect(status().isNotFound());
     }
 
 
@@ -125,14 +125,14 @@ public class TodoControllerTests {
     void should_patch_done_status_when_patch_todo_given_legal_done_status() throws Exception {
         long oldId = createNewTodoItem("OldText");
 
-        mockMvc.perform(patch("/todos/{id}",oldId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "done": true
-                                  }
-                                """)
-                ).andExpect(status().isOk());
+        mockMvc.perform(patch("/todos/{id}", oldId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "done": true
+                          }
+                        """)
+        ).andExpect(status().isOk());
 
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
@@ -145,7 +145,7 @@ public class TodoControllerTests {
     void should_delete_todo_when_delete_todo_given_exist_id() throws Exception {
         long oldId = createNewTodoItem("OldText");
 
-        mockMvc.perform(delete("/todos/{id}",oldId))
+        mockMvc.perform(delete("/todos/{id}", oldId))
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/todos"))
@@ -155,7 +155,7 @@ public class TodoControllerTests {
 
     @Test
     void should_return_404_when_delete_todo_given_not_exist_id() throws Exception {
-        mockMvc.perform(delete("/todos/{id}",999))
+        mockMvc.perform(delete("/todos/{id}", 999))
                 .andExpect(status().isNotFound());
     }
 

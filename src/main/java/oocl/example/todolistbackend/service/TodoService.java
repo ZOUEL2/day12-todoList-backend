@@ -6,6 +6,7 @@ import oocl.example.todolistbackend.exception.TodoNoFoundException;
 import oocl.example.todolistbackend.exception.TodoTextIllegalException;
 import oocl.example.todolistbackend.repository.TodoRepository;
 import oocl.example.todolistbackend.req.TodoUpdateReq;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,34 +17,36 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
 
-    public List<Todo> getAllTodos(){
+    @Tool(description = "list all todos")
+    public List<Todo> getAllTodos() {
         return todoRepository.listAll();
     }
 
+    @Tool(description = "add a todo")
     public void addTodo(Todo todo) {
-        if (todo.getText() == null || todo.getText().isBlank()){
+        if (todo.getText().isBlank()) {
             throw new TodoTextIllegalException("text为必填项");
         }
         todoRepository.addTodo(todo);
     }
 
-    public void update(Long id , TodoUpdateReq todoUpdateReq) {
+    @Tool(description = "update a todo by id")
+    public void updateTodo(Long id, TodoUpdateReq todoUpdateReq) {
         Todo todo = todoRepository.getById(id);
-        if (todo == null){
+        if (todo == null) {
             throw new TodoNoFoundException("该条todo不存在");
         }
-        if (todoUpdateReq.getDone() != null) {
-            todo.setDone(todoUpdateReq.getDone());
+
+        if (todoUpdateReq.getText().isEmpty() || todoUpdateReq.getText().isBlank()) {
+            throw new TodoTextIllegalException("text为必填项");
         }
-        if (todoUpdateReq.getText() != null) {
-            if (todoUpdateReq.getText().isBlank()) {
-                throw new TodoTextIllegalException("text为必填项");
-            }
-            todo.setText(todoUpdateReq.getText());
-        }
+
+        todo.setDone(todoUpdateReq.getDone());
+        todo.setText(todoUpdateReq.getText());
         todoRepository.update(todo);
     }
 
+    @Tool(description = "delete a todo by id")
     public void delete(long id) {
         boolean removed = todoRepository.removeById(id);
         if (!removed) {

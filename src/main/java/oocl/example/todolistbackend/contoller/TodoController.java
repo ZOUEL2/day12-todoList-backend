@@ -28,7 +28,7 @@ public class TodoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private Map<String, Object> createTodo(@RequestBody TodoCreateReq todoCreateReq) {
+    public Map<String, Object> createTodo(@RequestBody TodoCreateReq todoCreateReq) {
         Todo todo = new Todo();
         BeanUtils.copyProperties(todoCreateReq, todo);
         todoService.addTodo(todo);
@@ -37,21 +37,21 @@ public class TodoController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    private void updateTodo(@PathVariable long id, @RequestBody TodoUpdateReq todoUpdateReq) {
-        todoService.update(id,todoUpdateReq);
+    public void updateTodo(@PathVariable long id, @RequestBody TodoUpdateReq todoUpdateReq) {
+        todoService.updateTodo(id,todoUpdateReq);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    private void updateTodoDone(@PathVariable long id, @RequestBody TodoPatchReq done) {
+    public void updateTodoDone(@PathVariable long id, @RequestBody TodoPatchReq done) {
         TodoUpdateReq todoUpdateReq = new TodoUpdateReq();
         todoUpdateReq.setDone(done.getDone());
-        todoService.update(id,todoUpdateReq);
+        todoService.updateTodo(id,todoUpdateReq);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    private void deleteTodo(@PathVariable long id) {
+    public void deleteTodo(@PathVariable long id) {
         todoService.delete(id);
     }
 

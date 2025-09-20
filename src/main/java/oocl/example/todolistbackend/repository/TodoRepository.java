@@ -20,10 +20,6 @@ public class TodoRepository {
         todoJpaRepository.save(todo);
     }
 
-    public void clear() {
-        todoJpaRepository.deleteAll();
-    }
-
     public Todo getById(Long id) {
         return todoJpaRepository.findById(id).orElse(null);
     }
